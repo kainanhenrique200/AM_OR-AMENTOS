@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+
+# Ambientes virtuais
+venv/
+.env
+.venv/
+
+# IDEs
+.vscode/
+.idea/
+
+# Dados locais / arquivos gerados
+*.json
+*.pdf
+
+# Configurações sensíveis
+config.py
