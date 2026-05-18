@@ -20,3 +20,7 @@ venv/
 
 # Configurações sensíveis
 config.py
+
+# Subpastas com repositórios próprios
+AM-all/
+AM_OR-AMENTOS/

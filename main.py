@@ -1,5 +1,6 @@
 from managers.material_manager import menu_materiais
 from managers.orcamento_manager import menu_orcamentos
+from managers.cliente_manager import menu_clientes
 
 
 def menu_principal():
@@ -14,7 +15,7 @@ def menu_principal():
         opcao = input("Escolha: ")
 
         if opcao == "1":
-            print("em manutenção")
+            menu_clientes()
 
         elif opcao == "2":
             menu_materiais()
