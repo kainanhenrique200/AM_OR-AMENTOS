@@ -1,66 +1,93 @@
-from models.material import MaterialManager
+from models.material import Material
+
+materiais = []
+
+def adicionar_material():
+    nome = input("Digite o nome do material: ")
+    preco = float(input("Digite o preço por m2: "))
+
+    material = Material(nome, preco)
+    materiais.append(material)
+
+    print("Material cadastrado com sucesso")
 
 
-def menu_materiais(material_manager: MaterialManager = None):
-    if material_manager is None:
-        material_manager = MaterialManager()
+def listar_materiais():
+    if len(materiais) == 0:
+        print("Nenhum material cadastrado.\n")
+        return
 
+    for i, material in enumerate(materiais):
+        print(f"{i} - {material}")
+
+    print()
+
+
+def editar_material():
+    listar_materiais()
+
+    if len(materiais) == 0:
+        return
+
+    indice = int(input("Digite o indice do material que deseja editar: "))
+
+    if 0 <= indice < len(materiais):
+        novo_nome = input("Novo nome do material: ")
+        novo_preco = float(input("Novo preço por m2: "))
+
+        materiais[indice].nome = novo_nome
+        materiais[indice].preco_m2 = novo_preco
+
+        print("Material atualizado com sucesso")
+
+    else:
+        print("Indice invalido")
+
+def excluir_material():
+    listar_materiais()
+
+    if len(materiais) == 0:
+        return
+
+    indice = int(input("Digite o indice do material que deseja excluir: "))
+
+    if 0 <= indice < len(materiais):
+        materiais.pop(indice)
+
+        print("Material excluido com sucesso")
+
+    else:
+        print("Indice invalido")
+
+def main():
     while True:
-        print("\n=== MENU - MATERIAIS ===")
-        print("1 - Adicionar material")
-        print("2 - Listar materiais")
-        print("3 - Editar material")
-        print("4 - Excluir material")
-        print("0 - Voltar")
+        print("1...Adicionar material")
+        print("2...Listar materiais")
+        print("3...Editar material")
+        print("4...Excluir material")
+        print("0...Sair")
 
-        opcao = input("Escolha uma opção: ")
+        opcao = input("Escolha uma opcao: ")
 
         if opcao == "1":
-            nome = input("Nome do material: ")
-            try:
-                preco = float(input("Preço por m²: "))
-            except ValueError:
-                print("Preço inválido.")
-                continue
-
-            material_manager.adicionar_material(nome, preco)
-            print("Material cadastrado com sucesso!")
+            adicionar_material()
 
         elif opcao == "2":
-            material_manager.listar_materiais()
+            listar_materiais()
 
         elif opcao == "3":
-            material_manager.listar_materiais()
-            try:
-                id_material = int(input("Digite o ID do material que deseja editar: "))
-                novo_nome = input("Novo nome do material: ")
-                novo_preco = float(input("Novo preço por m²: "))
-            except ValueError:
-                print("Entrada inválida.")
-                continue
-
-            if material_manager.editar_material(id_material, novo_nome, novo_preco):
-                print("Material atualizado com sucesso.")
-            else:
-                print("ID inválido.")
+            editar_material()
 
         elif opcao == "4":
-            material_manager.listar_materiais()
-            try:
-                id_material = int(input("Digite o ID do material que deseja excluir: "))
-            except ValueError:
-                print("ID inválido.")
-                continue
-
-            if material_manager.excluir_material(id_material):
-                print("Material excluído com sucesso.")
-            else:
-                print("ID inválido.")
+            excluir_material()
 
         elif opcao == "0":
+            print("Encerrando o sistema...")
             break
 
         else:
-            print("Opção inválida.")
+            print("Opcao invalida!")
 
-    return material_manager
+
+if __name__ == "__main__":
+    main()
