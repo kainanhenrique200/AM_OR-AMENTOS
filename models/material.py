@@ -1,43 +1,49 @@
 class Material:
-    def __init__(self, id, nome, preco):
-        self.id = id
+    def __init__(self, id_material, nome, preco):
+        self.id = id_material
         self.nome = nome
         self.preco = preco
 
-class MaterialManager:
+    def __str__(self):
+        return f"ID: {self.id} | {self.nome} | R$ {self.preco:.2f}/m²"
 
+
+class MaterialManager:
     def __init__(self):
-        self.lista = []
-        self.id = 1
+        self.lista_materiais = []
+        self.proximo_id = 1
 
     def adicionar_material(self, nome, preco):
-
-        material = Material(self.id, nome, preco)
-
-        self.lista.append(material)
-
-        self.id += 1
+        material = Material(self.proximo_id, nome, preco)
+        self.lista_materiais.append(material)
+        self.proximo_id += 1
 
     def listar_materiais(self):
+        if len(self.lista_materiais) == 0:
+            print("\nNenhum material cadastrado.")
+            return
 
-        for material in self.lista:
+        print("\nMateriais disponíveis:")
+        for material in self.lista_materiais:
+            print(material)
 
-            print(material.id, material.nome, material.preco)
+    def editar_material(self, id_material, novo_nome, novo_preco):
+        for material in self.lista_materiais:
+            if material.id == id_material:
+                material.nome = novo_nome
+                material.preco = novo_preco
+                return True
+        return False
 
-    def editar_material(self, id, nome, preco):
+    def excluir_material(self, id_material):
+        for material in self.lista_materiais:
+            if material.id == id_material:
+                self.lista_materiais.remove(material)
+                return True
+        return False
 
-        for material in self.lista:
-
-            if material.id == id:
-
-                material.nome = nome
-                material.preco = preco
-
-    def excluir_material(self, id):
-
-        for material in self.lista:
-
-            if material.id == id:
-
-                self.lista.remove(material)
-
+    def buscar_por_id(self, id_material):
+        for material in self.lista_materiais:
+            if material.id == id_material:
+                return material
+        return None

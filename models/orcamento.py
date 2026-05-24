@@ -1,6 +1,7 @@
 import json
 from datetime import datetime
 from models.material import Material
+from calculos import calcular_total_orcamento as _calc_total
 
 class Orcamento:
 
@@ -40,14 +41,12 @@ class Orcamento:
         self.valor_final = self.calcular_total_orcamento()
 
     def calcular_total_orcamento(self):
-
-        subtotal = (self.valor_material * self.quantidade) + self.montagem
-
-        taxa = subtotal * (self.taxa_cartao / 100)
-
-        valor_final = subtotal + taxa
-
-        return valor_final
+        return _calc_total(
+            self.valor_material,
+            self.quantidade,
+            self.montagem,
+            self.taxa_cartao
+        )
 
     def mostrar_orcamento(self):
 
