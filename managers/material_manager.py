@@ -64,7 +64,3 @@ def menu_materiais(material_manager: MaterialManager = None):
             print("Opção inválida.")
 
     return material_manager
-
-
-if __name__ == "__main__":
-    menu_materiais()

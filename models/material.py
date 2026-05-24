@@ -1,6 +1,6 @@
 class Material:
-    def __init__(self, id_material, nome, preco):
-        self.id = id_material
+    def __init__(self, id, nome, preco):
+        self.id = id
         self.nome = nome
         self.preco = preco
 
