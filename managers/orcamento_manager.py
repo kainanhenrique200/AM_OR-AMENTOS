@@ -2,13 +2,13 @@ from models.material import Material, MaterialManager
 from models.orcamento import Orcamento, SistemaOrcamentos
 
 
-def menu_orcamentos():
+def menu_orcamentos(manager: MaterialManager = None):
 
-    manager = MaterialManager()
-
-    manager.adicionar_material("Granito Preto", 850)
-    manager.adicionar_material("Mármore Branco", 1200)
-    manager.adicionar_material("Quartzo", 1500)
+    if manager is None:
+        manager = MaterialManager()
+        manager.adicionar_material("Granito Preto", 850)
+        manager.adicionar_material("Mármore Branco", 1200)
+        manager.adicionar_material("Quartzo", 1500)
 
     sistema = SistemaOrcamentos()
 
@@ -36,13 +36,7 @@ def menu_orcamentos():
 
             id_material = int(input("\nEscolha o ID do material: "))
 
-            material_escolhido = None
-
-            for material in manager.lista:
-
-                if material.id == id_material:
-
-                    material_escolhido = material
+            material_escolhido = manager.buscar_por_id(id_material)
 
             if material_escolhido is None:
 
