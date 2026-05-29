@@ -1,5 +1,4 @@
 from managers.cliente_manager import ClienteManager
-from managers.orcamento_manager import menu_orcamentos
 from managers.segmento_manager import menu_metragens
 from managers.material_manager import main as menu_materiais
 
@@ -21,6 +20,8 @@ def menu_principal():
             cliente_manager.menu()
 
         elif opcao == "2":
+            from managers.orcamento_manager import menu_orcamentos
+
             menu_orcamentos()
 
         elif opcao == "3":
