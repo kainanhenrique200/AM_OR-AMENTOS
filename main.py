@@ -25,7 +25,7 @@ def menu_principal():
             menu_orcamentos()
 
         elif opcao == "3":
-            menu_metragens(cliente_manager)
+            menu_metragens()
 
         elif opcao == "4":
             menu_materiais()

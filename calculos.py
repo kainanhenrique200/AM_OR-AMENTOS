@@ -4,6 +4,24 @@ Pode ser importado por qualquer outro módulo do projeto.
 """
 
 
+class Metragem:
+    def __init__(self, descricao, largura, comprimento):
+        self.__descricao = descricao
+        self.__largura = largura
+        self.__comprimento = comprimento
+
+    def calcular_area(self):
+        return self.__largura * self.__comprimento
+
+    def __str__(self):
+        return (
+            f"{self.__descricao} | "
+            f"{self.__largura}m x "
+            f"{self.__comprimento}m | "
+            f"Área: {self.calcular_area():.2f} m²"
+        )
+
+
 def calcular_area(largura: float, comprimento: float) -> float:
     """Retorna a área em m² a partir de largura e comprimento."""
     return largura * comprimento
@@ -55,4 +73,4 @@ if __name__ == "__main__":
 
     print(f"\nÁrea total:       {area:.2f} m²")
     print(f"Área arredondada: {area_arredondada} m²")
-    print(f"Conversão decimal: {decimal:.4f}")
+    print(f"Conversão decimal: {decimal:.4f}")
