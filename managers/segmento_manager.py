@@ -83,8 +83,4 @@ def main():
 
 
 def menu_metragens():
-    menu()
-
-
-if __name__ == "__main__":
-    menu_metragens()
+    main()
