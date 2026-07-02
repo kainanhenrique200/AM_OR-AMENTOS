@@ -1,4 +1,4 @@
-import subprocess
+from managers.material_manager import main as menu_materiais
 
 
 def menu_principal():
@@ -14,11 +14,8 @@ def menu_principal():
         if opcao == "1":
             print("em manutenção")
 
-        if opcao == "2":
-
-            subprocess.run(
-                ["python", "-m", "managers.material_manager"]
-            )
+        elif opcao == "2":
+            menu_materiais()
 
         elif opcao == "0":
             print("Saindo...")
