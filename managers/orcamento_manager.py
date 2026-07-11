@@ -1,7 +1,11 @@
+import database
 from models.orcamento import Orcamento
 from managers.material_manager import materiais
 
-orcamentos = []
+orcamentos = database.carregar_orcamentos(materiais)
+
+def _salvar_orcamentos():
+    database.salvar_orcamentos(orcamentos)
 
 
 def criar_orcamento():
@@ -40,6 +44,7 @@ def criar_orcamento():
     )
 
     orcamentos.append(orcamento)
+    _salvar_orcamentos()
 
     print("Orçamento cadastrado com sucesso")
 
@@ -72,7 +77,8 @@ def editar_orcamento():
 
         nova_descricao = input("Nova descrição: ")
         orcamentos[indice].descricao = nova_descricao
-
+        _salvar_orcamentos()
+        
         print("Orçamento atualizado com sucesso")
 
     else:
@@ -91,6 +97,7 @@ def excluir_orcamento():
     if 0 <= indice < len(orcamentos):
 
         orcamentos.pop(indice)
+        _salvar_orcamentos()
 
         print("Orçamento excluído com sucesso")
 

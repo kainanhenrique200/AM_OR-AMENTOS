@@ -1,9 +1,14 @@
+import database
 from calculos import Metragem
 
-medidas = []
+medidas = database.carregar_medidas()
+
+
+def _salvar_medidas():
+    database.salvar_medidas(medidas)
+
 
 def adicionar_medida():
-
     descricao = input("Descrição: ")
     largura = float(input("Largura: "))
     comprimento = float(input("Comprimento: "))
@@ -15,6 +20,7 @@ def adicionar_medida():
     )
 
     medidas.append(medida)
+    _salvar_medidas()
 
     print("Medida cadastrada com sucesso!")
 
@@ -38,6 +44,7 @@ def excluir_medida():
 
     if 0 <= indice < len(medidas):
         medidas.pop(indice)
+        _salvar_medidas()
         print("Medida excluída!")
     else:
         print("Índice inválido")

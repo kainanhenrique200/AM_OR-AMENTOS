@@ -1,6 +1,11 @@
+import database
 from models.material import Material
 
-materiais = []
+materiais = database.carregar_materiais()
+
+def _salvar_materiais():
+    database.salvar_materiais(materiais)
+
 
 def adicionar_material():
     nome = input("Digite o nome do material: ")
@@ -8,6 +13,7 @@ def adicionar_material():
 
     material = Material(nome, preco)
     materiais.append(material)
+    _salvar_materiais()
 
     print("Material cadastrado com sucesso")
 
@@ -37,6 +43,7 @@ def editar_material():
 
         materiais[indice].nome = novo_nome
         materiais[indice].preco_m2 = novo_preco
+        _salvar_materiais()
 
         print("Material atualizado com sucesso")
 
@@ -53,6 +60,7 @@ def excluir_material():
 
     if 0 <= indice < len(materiais):
         materiais.pop(indice)
+        _salvar_materiais()
 
         print("Material excluido com sucesso")
 

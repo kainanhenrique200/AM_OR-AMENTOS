@@ -1,11 +1,17 @@
+import database
 from models.cliente import Cliente
 
 
 class ClienteManager:
     def __init__(self):
-        self.clientes = []
-        self.clientes_arquivados = []
-        self.proximo_id = 1
+        self.clientes, self.clientes_arquivados = database.carregar_clientes()
+        self.proximo_id = max(
+            [cliente.id for cliente in self.clientes + self.clientes_arquivados],
+            default=0,
+        ) + 1
+
+    def _salvar_clientes(self):
+        database.salvar_clientes(self.clientes, self.clientes_arquivados)
 
 
     def cadastrar_cliente(self):
@@ -23,6 +29,7 @@ class ClienteManager:
         )
 
         self.clientes.append(novo_cliente)
+        self._salvar_clientes()
 
         print("Cliente cadastrado com sucesso!")
 
@@ -63,6 +70,7 @@ class ClienteManager:
         for cliente in self.clientes:
             if cliente.id == id_busca:
                 self.clientes.remove(cliente)
+                self._salvar_clientes()
                 print("Cliente excluído.")
                 return
 
@@ -77,6 +85,7 @@ class ClienteManager:
 
                 self.clientes.remove(cliente)
                 self.clientes_arquivados.append(cliente)
+                self._salvar_clientes()
 
                 print("Cliente arquivado.")
                 return
@@ -92,6 +101,7 @@ class ClienteManager:
 
                 self.clientes_arquivados.remove(cliente)
                 self.clientes.append(cliente)
+                self._salvar_clientes()
 
                 print("Cliente restaurado.")
                 return
