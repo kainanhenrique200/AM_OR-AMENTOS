@@ -1,93 +1,93 @@
-import database
-from calculos import Metragem
+import database 
+from calculos import Metragem 
 
-medidas = database.carregar_medidas()
-
-
-def _salvar_medidas():
-    database.salvar_medidas(medidas)
+medidas =database .carregar_medidas ()
 
 
-def adicionar_medida():
-    descricao = input("Descrição: ")
-    largura = float(input("Largura: "))
-    comprimento = float(input("Comprimento: "))
+def _salvar_medidas ():
+    database .salvar_medidas (medidas )
 
-    medida = Metragem(
-        descricao,
-        largura,
-        comprimento
+
+def adicionar_medida ():
+    descricao =input ("Descrição: ")
+    largura =float (input ("Largura: "))
+    comprimento =float (input ("Comprimento: "))
+
+    medida =Metragem (
+    descricao ,
+    largura ,
+    comprimento 
     )
 
-    medidas.append(medida)
-    _salvar_medidas()
+    medidas .append (medida )
+    _salvar_medidas ()
 
-    print("Medida cadastrada com sucesso!")
+    print ("Medida cadastrada com sucesso!")
 
-def listar_medidas():
+def listar_medidas ():
 
-    if len(medidas) == 0:
-        print("Nenhuma medida cadastrada.")
-        return
+    if len (medidas )==0 :
+        print ("Nenhuma medida cadastrada.")
+        return 
 
-    contador = 0
+    contador =0 
 
-    for medida in medidas:
-        print(f"{contador} - {medida}")
-        contador += 1
+    for medida in medidas :
+        print (f"{contador } - {medida }")
+        contador +=1 
 
-def excluir_medida():
+def excluir_medida ():
 
-    listar_medidas()
+    listar_medidas ()
 
-    indice = int(input("Digite o índice: "))
+    indice =int (input ("Digite o índice: "))
 
-    if 0 <= indice < len(medidas):
-        medidas.pop(indice)
-        _salvar_medidas()
-        print("Medida excluída!")
-    else:
-        print("Índice inválido")
+    if 0 <=indice <len (medidas ):
+        medidas .pop (indice )
+        _salvar_medidas ()
+        print ("Medida excluída!")
+    else :
+        print ("Índice inválido")
 
-def calcular_total():
+def calcular_total ():
 
-    total = 0
+    total =0 
 
-    for medida in medidas:
-        total += medida.calcular_area()
+    for medida in medidas :
+        total +=medida .calcular_area ()
 
-    print(f"Área total: {total:.2f} m²")
+    print (f"Área total: {total :.2f} m²")
 
-def main():
+def main ():
 
-    while True:
+    while True :
 
-        print("\n1 - Adicionar medida")
-        print("2 - Listar medidas")
-        print("3 - Excluir medida")
-        print("4 - Calcular área total")
-        print("0 - Sair")
+        print ("\n1 - Adicionar medida")
+        print ("2 - Listar medidas")
+        print ("3 - Excluir medida")
+        print ("4 - Calcular área total")
+        print ("0 - Sair")
 
-        opcao = input("Opção: ")
+        opcao =input ("Opção: ")
 
-        if opcao == "1":
-            adicionar_medida()
+        if opcao =="1":
+            adicionar_medida ()
 
-        elif opcao == "2":
-            listar_medidas()
+        elif opcao =="2":
+            listar_medidas ()
 
-        elif opcao == "3":
-            excluir_medida()
+        elif opcao =="3":
+            excluir_medida ()
 
-        elif opcao == "4":
-            calcular_total()
+        elif opcao =="4":
+            calcular_total ()
 
-        elif opcao == "0":
-            break
+        elif opcao =="0":
+            break 
 
-        else:
-            print("Opção inválida")
+        else :
+            print ("Opção inválida")
 
 
-def menu_metragens():
-    main()
+def menu_metragens ():
+    main ()

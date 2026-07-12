@@ -1,6 +1,6 @@
-def pausar():
-    input("\nPressione Enter para continuar...")
+def pausar ():
+    input ("\nPressione Enter para continuar...")
 
 
-def linha():
-    print("-" * 40)
+def linha ():
+    print ("-"*40 )

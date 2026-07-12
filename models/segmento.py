@@ -1,100 +1,100 @@
-from models.cliente import Cliente
-from calculos import calcular_area as _calc_area
+from models .cliente import Cliente 
+from calculos import calcular_area as _calc_area 
 
 
-class Metragem:
+class Metragem :
 
-    def __init__(self, id, cliente, largura, comprimento):
+    def __init__ (self ,id ,cliente ,largura ,comprimento ):
 
-        self.id = id
+        self .id =id 
 
-        self.cliente = cliente
+        self .cliente =cliente 
 
-        self.largura = largura
+        self .largura =largura 
 
-        self.comprimento = comprimento
+        self .comprimento =comprimento 
 
-        self.area = self.calcular_area()
+        self .area =self .calcular_area ()
 
-    def calcular_area(self):
-        return _calc_area(self.largura, self.comprimento)
+    def calcular_area (self ):
+        return _calc_area (self .largura ,self .comprimento )
 
-    def mostrar(self):
+    def mostrar (self ):
 
-        print(f"\nID: {self.id}")
+        print (f"\nID: {self .id }")
 
-        print(f"Cliente: {self.cliente.nome}")
+        print (f"Cliente: {self .cliente .nome }")
 
-        print(f"Largura: {self.largura}m")
+        print (f"Largura: {self .largura }m")
 
-        print(f"Comprimento: {self.comprimento}m")
+        print (f"Comprimento: {self .comprimento }m")
 
-        print(f"Área: {self.area:.2f}m²")
+        print (f"Área: {self .area :.2f}m²")
 
 
-class SistemaMetragem:
+class SistemaMetragem :
 
-    def __init__(self):
+    def __init__ (self ):
 
-        self.lista = []
+        self .lista =[]
 
-        self.id = 1
+        self .id =1 
 
-    def adicionar(self, cliente, largura, comprimento):
+    def adicionar (self ,cliente ,largura ,comprimento ):
 
-        metragem = Metragem(
+        metragem =Metragem (
 
-            self.id,
-            cliente,
-            largura,
-            comprimento
+        self .id ,
+        cliente ,
+        largura ,
+        comprimento 
         )
 
-        self.lista.append(metragem)
+        self .lista .append (metragem )
 
-        self.id += 1
+        self .id +=1 
 
-    def listar(self):
+    def listar (self ):
 
-        if len(self.lista) == 0:
+        if len (self .lista )==0 :
 
-            print("\nNenhuma metragem cadastrada.")
+            print ("\nNenhuma metragem cadastrada.")
 
-        else:
+        else :
 
-            for metragem in self.lista:
+            for metragem in self .lista :
 
-                metragem.mostrar()
+                metragem .mostrar ()
 
-    def buscar_por_id(self, id):
-        for metragem in self.lista:
-            if metragem.id == id:
-                return metragem
-        return None
+    def buscar_por_id (self ,id ):
+        for metragem in self .lista :
+            if metragem .id ==id :
+                return metragem 
+        return None 
 
-    def editar(self, id, largura, comprimento):
+    def editar (self ,id ,largura ,comprimento ):
 
-        for metragem in self.lista:
+        for metragem in self .lista :
 
-            if metragem.id == id:
+            if metragem .id ==id :
 
-                metragem.largura = largura
+                metragem .largura =largura 
 
-                metragem.comprimento = comprimento
+                metragem .comprimento =comprimento 
 
-                metragem.area = metragem.calcular_area()
+                metragem .area =metragem .calcular_area ()
 
-                print("\nMetragem editada com sucesso!")
+                print ("\nMetragem editada com sucesso!")
 
-    def excluir(self, id):
+    def excluir (self ,id ):
 
-        for metragem in self.lista:
+        for metragem in self .lista :
 
-            if metragem.id == id:
+            if metragem .id ==id :
 
-                self.lista.remove(metragem)
+                self .lista .remove (metragem )
 
-                print("\nMetragem excluída com sucesso!")
-                return
+                print ("\nMetragem excluída com sucesso!")
+                return 
 
-        print("\nMetragem não encontrada.")
+        print ("\nMetragem não encontrada.")

@@ -1,101 +1,101 @@
-import database
-from models.material import Material
+import database 
+from models .material import Material 
 
-materiais = database.carregar_materiais()
+materiais =database .carregar_materiais ()
 
-def _salvar_materiais():
-    database.salvar_materiais(materiais)
-
-
-def adicionar_material():
-    nome = input("Digite o nome do material: ")
-    preco = float(input("Digite o preço por m2: "))
-
-    material = Material(nome, preco)
-    materiais.append(material)
-    _salvar_materiais()
-
-    print("Material cadastrado com sucesso")
+def _salvar_materiais ():
+    database .salvar_materiais (materiais )
 
 
-def listar_materiais():
-    if len(materiais) == 0:
-        print("Nenhum material cadastrado.\n")
-        return
+def adicionar_material ():
+    nome =input ("Digite o nome do material: ")
+    preco =float (input ("Digite o preço por m2: "))
 
-    for i, material in enumerate(materiais):
-        print(f"{i} - {material}")
+    material =Material (nome ,preco )
+    materiais .append (material )
+    _salvar_materiais ()
 
-    print()
-
-
-def editar_material():
-    listar_materiais()
-
-    if len(materiais) == 0:
-        return
-
-    indice = int(input("Digite o indice do material que deseja editar: "))
-
-    if 0 <= indice < len(materiais):
-        novo_nome = input("Novo nome do material: ")
-        novo_preco = float(input("Novo preço por m2: "))
-
-        materiais[indice].nome = novo_nome
-        materiais[indice].preco_m2 = novo_preco
-        _salvar_materiais()
-
-        print("Material atualizado com sucesso")
-
-    else:
-        print("Indice invalido")
-
-def excluir_material():
-    listar_materiais()
-
-    if len(materiais) == 0:
-        return
-
-    indice = int(input("Digite o indice do material que deseja excluir: "))
-
-    if 0 <= indice < len(materiais):
-        materiais.pop(indice)
-        _salvar_materiais()
-
-        print("Material excluido com sucesso")
-
-    else:
-        print("Indice invalido")
-
-def main():
-    while True:
-        print("1...Adicionar material")
-        print("2...Listar materiais")
-        print("3...Editar material")
-        print("4...Excluir material")
-        print("0...Sair")
-
-        opcao = input("Escolha uma opcao: ")
-
-        if opcao == "1":
-            adicionar_material()
-
-        elif opcao == "2":
-            listar_materiais()
-
-        elif opcao == "3":
-            editar_material()
-
-        elif opcao == "4":
-            excluir_material()
-
-        elif opcao == "0":
-            print("Encerrando o sistema...")
-            break
-
-        else:
-            print("Opcao invalida!")
+    print ("Material cadastrado com sucesso")
 
 
-if __name__ == "__main__":
-    main()
+def listar_materiais ():
+    if len (materiais )==0 :
+        print ("Nenhum material cadastrado.\n")
+        return 
+
+    for i ,material in enumerate (materiais ):
+        print (f"{i } - {material }")
+
+    print ()
+
+
+def editar_material ():
+    listar_materiais ()
+
+    if len (materiais )==0 :
+        return 
+
+    indice =int (input ("Digite o indice do material que deseja editar: "))
+
+    if 0 <=indice <len (materiais ):
+        novo_nome =input ("Novo nome do material: ")
+        novo_preco =float (input ("Novo preço por m2: "))
+
+        materiais [indice ].nome =novo_nome 
+        materiais [indice ].preco_m2 =novo_preco 
+        _salvar_materiais ()
+
+        print ("Material atualizado com sucesso")
+
+    else :
+        print ("Indice invalido")
+
+def excluir_material ():
+    listar_materiais ()
+
+    if len (materiais )==0 :
+        return 
+
+    indice =int (input ("Digite o indice do material que deseja excluir: "))
+
+    if 0 <=indice <len (materiais ):
+        materiais .pop (indice )
+        _salvar_materiais ()
+
+        print ("Material excluido com sucesso")
+
+    else :
+        print ("Indice invalido")
+
+def main ():
+    while True :
+        print ("1...Adicionar material")
+        print ("2...Listar materiais")
+        print ("3...Editar material")
+        print ("4...Excluir material")
+        print ("0...Sair")
+
+        opcao =input ("Escolha uma opcao: ")
+
+        if opcao =="1":
+            adicionar_material ()
+
+        elif opcao =="2":
+            listar_materiais ()
+
+        elif opcao =="3":
+            editar_material ()
+
+        elif opcao =="4":
+            excluir_material ()
+
+        elif opcao =="0":
+            print ("Encerrando o sistema...")
+            break 
+
+        else :
+            print ("Opcao invalida!")
+
+
+if __name__ =="__main__":
+    main ()
