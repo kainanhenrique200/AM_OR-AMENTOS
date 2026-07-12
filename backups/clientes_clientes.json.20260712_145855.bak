@@ -1,0 +1,12 @@
+{
+    "ativos": [
+        {
+            "id": 1,
+            "nome": "Teste",
+            "telefone": "000",
+            "email": "a@b.com",
+            "arquivado": false
+        }
+    ],
+    "arquivados": []
+}

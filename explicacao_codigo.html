@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AM ORÇAMENTOS — Guia de Arquitetura e Código</title>
+  
+  <!-- Fontes Premium -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Prism.js para realce de código (Syntax Highlighting) -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+  
+  <style>
+    :root {
+      /* Palette HSL - Light Mode */
+      --hue-primary: 220;
+      --hue-success: 142;
+      --hue-danger: 346;
+      --hue-warning: 38;
+      
+      --primary: hsl(var(--hue-primary), 85%, 55%);
+      --primary-hover: hsl(var(--hue-primary), 90%, 45%);
+      --primary-light: hsl(var(--hue-primary), 90%, 94%);
+      
+      --success: hsl(var(--hue-success), 70%, 45%);
+      --success-light: hsl(var(--hue-success), 70%, 94%);
+      --danger: hsl(var(--hue-danger), 80%, 55%);
+      --danger-light: hsl(var(--hue-danger), 80%, 94%);
+      --warning: hsl(var(--hue-warning), 90%, 48%);
+      --warning-light: hsl(var(--hue-warning), 90%, 94%);
+      
+      --bg-app: hsl(220, 30%, 98%);
+      --bg-card: hsl(0, 0%, 100%);
+      --bg-sidebar: hsl(222, 47%, 11%);
+      --bg-code: hsl(220, 20%, 96%);
+      --border: hsl(220, 15%, 90%);
+      --border-glow: hsla(var(--hue-primary), 85%, 55%, 0.1);
+      
+      --text-main: hsl(222, 40%, 15%);
+      --text-muted: hsl(220, 15%, 45%);
+      --text-sidebar: hsl(210, 40%, 95%);
+      --text-sidebar-muted: hsl(215, 20%, 65%);
+      
+      --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.04);
+      --shadow-md: 0 8px 24px rgba(15, 23, 42, 0.06);
+      --shadow-lg: 0 16px 40px rgba(15, 23, 42, 0.1);
+      
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 24px;
+      
+      --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Dark Mode overrides */
+    [data-theme="dark"] {
+      --bg-app: hsl(222, 47%, 9%);
+      --bg-card: hsl(223, 47%, 14%);
+      --bg-code: hsl(224, 40%, 8%);
+      --border: hsl(223, 20%, 20%);
+      --border-glow: hsla(var(--hue-primary), 85%, 55%, 0.2);
+      
+      --text-main: hsl(210, 40%, 98%);
+      --text-muted: hsl(215, 20%, 70%);
+      
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
+      --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.25);
+      --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.35);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      background-color: var(--bg-app);
+      color: var(--text-main);
+      display: flex;
+      min-height: 100vh;
+      transition: background-color 0.3s var(--transition), color 0.3s var(--transition);
+    }
+
+    /* BARRA LATERAL (SIDEBAR) */
+    aside {
+      width: 280px;
+      background-color: var(--bg-sidebar);
+      color: var(--text-sidebar);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 100;
+      border-right: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 2rem 1.5rem;
+      transition: var(--transition);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .brand-logo {
+      background: linear-gradient(135deg, var(--primary) 0%, #6366f1 100%);
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 800;
+      font-size: 1.25rem;
+      box-shadow: 0 8px 16px rgba(37, 99, 235, 0.3);
+    }
+
+    .brand-name {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 1.15rem;
+      letter-spacing: 0.5px;
+    }
+
+    .nav-menu {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      flex-grow: 1;
+    }
+
+    .nav-item a {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.85rem 1rem;
+      color: var(--text-sidebar-muted);
+      text-decoration: none;
+      border-radius: var(--radius-sm);
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: var(--transition);
+    }
+
+    .nav-item a:hover, .nav-item.active a {
+      color: var(--text-sidebar);
+      background-color: rgba(255, 255, 255, 0.08);
+    }
+
+    .nav-item.active a {
+      background: linear-gradient(135deg, var(--primary) 0%, rgba(37, 99, 235, 0.7) 100%);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+    }
+
+    .sidebar-footer {
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding-top: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    /* CONTEÚDO PRINCIPAL */
+    main {
+      margin-left: 280px;
+      flex-grow: 1;
+      padding: 2.5rem 3rem;
+      max-width: 1200px;
+      transition: var(--transition);
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 3rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1.5rem;
+    }
+
+    .header-info h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.25rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--primary) 0%, #6366f1 80%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+    }
+
+    .header-info p {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+    }
+
+    /* CONTROLE DE TEMA (DARK/LIGHT) */
+    .theme-switch {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 0.4rem;
+      border-radius: 99px;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .theme-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: none;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      transition: var(--transition);
+    }
+
+    .theme-btn.active {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+    }
+
+    /* SEÇÕES */
+    section {
+      margin-bottom: 4.5rem;
+      scroll-margin-top: 2rem;
+    }
+
+    .section-header {
+      margin-bottom: 1.75rem;
+    }
+
+    .section-header h2 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.75rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .section-header h2::after {
+      content: '';
+      flex-grow: 1;
+      height: 1px;
+      background: var(--border);
+      margin-left: 1rem;
+    }
+
+    .section-desc {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      line-height: 1.6;
+      margin-bottom: 2rem;
+    }
+
+    /* CARDS */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--primary-light);
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--primary);
+      opacity: 0;
+      transition: var(--transition);
+    }
+
+    .card:hover::before {
+      opacity: 1;
+    }
+
+    /* ESTRUTURA DE DIRETÓRIOS */
+    .tree-wrapper {
+      background-color: var(--bg-code);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1.5rem 2rem;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.9rem;
+      line-height: 1.65;
+      overflow-x: auto;
+    }
+
+    .tree-folder {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .tree-file {
+      color: var(--text-main);
+    }
+
+    .tree-comment {
+      color: var(--text-muted);
+      font-style: italic;
+      margin-left: 1rem;
+    }
+
+    /* TABS COMPARATIVAS (CÓDIGO VS JSON) */
+    .tab-container {
+      margin-top: 1.5rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--bg-card);
+      overflow: hidden;
+    }
+
+    .tab-header {
+      display: flex;
+      background: var(--bg-app);
+      border-bottom: 1px solid var(--border);
+      padding: 0.5rem 1rem 0;
+      gap: 0.25rem;
+    }
+
+    .tab-btn {
+      padding: 0.75rem 1.25rem;
+      border: 1px solid transparent;
+      border-bottom: none;
+      background: transparent;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+      transition: var(--transition);
+    }
+
+    .tab-btn:hover {
+      color: var(--text-main);
+    }
+
+    .tab-btn.active {
+      background: var(--bg-card);
+      border-color: var(--border);
+      color: var(--primary);
+    }
+
+    .tab-content {
+      display: none;
+      padding: 1.5rem;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    pre[class*="language-"] {
+      border-radius: var(--radius-sm) !important;
+      margin: 0 !important;
+      font-size: 0.85rem !important;
+    }
+
+    /* BADGES */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.3rem 0.75rem;
+      border-radius: 99px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .badge-primary { background: var(--primary-light); color: var(--primary); }
+    .badge-success { background: var(--success-light); color: var(--success); }
+    .badge-danger { background: var(--danger-light); color: var(--danger); }
+    .badge-warning { background: var(--warning-light); color: var(--warning); }
+
+    /* DIAGRAMAS SVG */
+    .diagram-container {
+      width: 100%;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 2rem;
+      display: flex;
+      justify-content: center;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .diagram-svg {
+      max-width: 100%;
+      height: auto;
+    }
+
+    .diagram-node {
+      fill: var(--bg-card);
+      stroke: var(--border);
+      stroke-width: 2px;
+      transition: var(--transition);
+    }
+
+    .diagram-node:hover {
+      stroke: var(--primary);
+      filter: drop-shadow(0 4px 8px rgba(37, 99, 235, 0.15));
+    }
+
+    .diagram-text {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      fill: var(--text-main);
+      pointer-events: none;
+    }
+
+    .diagram-arrow {
+      fill: none;
+      stroke: var(--text-muted);
+      stroke-width: 2px;
+      marker-end: url(#arrow);
+    }
+
+    .diagram-lbl {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 10px;
+      fill: var(--text-muted);
+    }
+
+    /* GRID DO LAYOUT */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 900px) {
+      aside {
+        transform: translateX(-100%);
+        width: 0;
+        padding: 0;
+        overflow: hidden;
+      }
+      
+      main {
+        margin-left: 0;
+        padding: 1.5rem 1.5rem;
+      }
+      
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* MÉTODOS E DETALHES */
+    .method-list {
+      margin-top: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .method-item {
+      border-left: 3px solid var(--primary);
+      padding-left: 1.25rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .method-name {
+      font-family: 'Fira Code', monospace;
+      font-weight: 600;
+      color: var(--text-main);
+      font-size: 0.95rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .method-desc {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    /* GLOW EFFECTS */
+    .glow-card {
+      background: radial-gradient(circle at top right, var(--border-glow) 0%, transparent 70%), var(--bg-card);
+    }
+
+    /* DICAS E AVISOS */
+    .alert-box {
+      border-radius: var(--radius-md);
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      border: 1px solid transparent;
+    }
+
+    .alert-box.tip {
+      background-color: var(--success-light);
+      border-color: hsla(var(--hue-success), 70%, 45%, 0.15);
+      color: hsl(var(--hue-success), 70%, 25%);
+    }
+
+    .alert-box.info {
+      background-color: var(--primary-light);
+      border-color: hsla(var(--hue-primary), 85%, 55%, 0.15);
+      color: hsl(var(--hue-primary), 85%, 25%);
+    }
+
+    .alert-box.warning {
+      background-color: var(--warning-light);
+      border-color: hsla(var(--hue-warning), 90%, 48%, 0.15);
+      color: hsl(var(--hue-warning), 90%, 25%);
+    }
+
+    .alert-icon {
+      font-size: 1.25rem;
+      user-select: none;
+    }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border);
+      padding-top: 2rem;
+      margin-top: 5rem;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    footer a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body data-theme="light">
+
+  <!-- BARRA LATERAL (SIDEBAR) -->
+  <aside>
+    <div class="brand">
+      <div class="brand-logo">Budget</div>
+      <div class="brand-name">AM ORÇAMENTOS</div>
+    </div>
+    
+    <ul class="nav-menu">
+      <li class="nav-item active" data-section="organizacao"><a href="#organizacao">📁 Organização</a></li>
+      <li class="nav-item" data-section="modelos"><a href="#modelos">🧱 Modelos (Models)</a></li>
+      <li class="nav-item" data-section="managers"><a href="#managers">⚙️ Controladores (Managers)</a></li>
+      <li class="nav-item" data-section="persistencia"><a href="#persistencia">💾 Persistência & JSON</a></li>
+      <li class="nav-item" data-section="salvamento"><a href="#salvamento">🔄 Fluxo de Salvamento</a></li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <div style="font-size: 0.8rem; color: var(--text-sidebar-muted);">
+        Desenvolvido para o IFRN
+      </div>
+    </div>
+  </aside>
+
+  <!-- CONTEÚDO PRINCIPAL -->
+  <main>
+    <header>
+      <div class="header-info">
+        <h1>Documentação Técnica do Sistema</h1>
+        <p>Aprenda a arquitetura, modelos, gerenciadores e o fluxo de dados do AM Orçamentos.</p>
+      </div>
+      
+      <!-- Seletor de Tema -->
+      <div class="theme-switch" id="themeSwitch" title="Alternar tema">
+        <button class="theme-btn active" id="themeBtnLight">☀️</button>
+        <button class="theme-btn" id="themeBtnDark">🌙</button>
+      </div>
+    </header>
+
+    <!-- SEÇÃO 1: ORGANIZAÇÃO -->
+    <section id="organizacao">
+      <div class="section-header">
+        <h2>📁 Organização do Projeto</h2>
+      </div>
+      <p class="section-desc">
+        O sistema é modular, seguindo uma separação clara de responsabilidades baseada no padrão de arquitetura de camadas: 
+        <strong>Modelos de Domínio (Models)</strong> para descrever os dados, 
+        <strong>Controladores (Managers)</strong> para orquestrar a lógica de negócios e menus CLI, e uma 
+        <strong>Camada de Acesso a Dados (Persistence/Storage)</strong> para gravar os arquivos.
+      </p>
+
+      <div class="card glow-card">
+        <h3 style="margin-bottom: 1rem;">Árvore de Diretórios</h3>
+        <div class="tree-wrapper">
+          <span class="tree-folder">AM_OR-AMENTOS-master/</span><br>
+          ├── <span class="tree-folder">models/</span><span class="tree-comment"># Contém os moldes e estruturas de dados orientados a objetos</span><br>
+          │   ├── <span class="tree-file">__init__.py</span><br>
+          │   ├── <span class="tree-file">cliente.py</span><span class="tree-comment"># Definição do modelo de Cliente</span><br>
+          │   ├── <span class="tree-file">material.py</span><span class="tree-comment"># Modelos de Produto e Material</span><br>
+          │   ├── <span class="tree-file">orcamento.py</span><span class="tree-comment"># Modelos de Cadastro e Orçamento</span><br>
+          │   └── <span class="tree-file">segmento.py</span><span class="tree-comment"># Modelo alternativo e isolado de Metragem</span><br>
+          ├── <span class="tree-folder">managers/</span><span class="tree-comment"># Módulos de lógica de negócios e menus interativos de terminal</span><br>
+          │   ├── <span class="tree-file">__init__.py</span><br>
+          │   ├── <span class="tree-file">cliente_manager.py</span><span class="tree-comment"># Controla o CRUD de clientes</span><br>
+          │   ├── <span class="tree-file">material_manager.py</span><span class="tree-comment"># Controla o CRUD de materiais</span><br>
+          │   ├── <span class="tree-file">orcamento_manager.py</span><span class="tree-comment"># Controla criação, edição e cálculos de orçamentos</span><br>
+          │   └── <span class="tree-file">segmento_manager.py</span><span class="tree-comment"># Controla o cálculo de medidas e áreas</span><br>
+          ├── <span class="tree-folder">backups/</span><span class="tree-comment"># Gerado automaticamente pelo sistema. Armazena cópias de segurança em .bak</span><br>
+          ├── <span class="tree-folder">clientes/</span>, <span class="tree-folder">materiais/</span>, <span class="tree-folder">orcamentos/</span>, <span class="tree-folder">medidas/</span><span class="tree-comment"># Pastas onde residem os bancos JSON</span><br>
+          ├── <span class="tree-file">calculos.py</span><span class="tree-comment"># Classe Metragem principal com encapsulamento de atributos privados</span><br>
+          ├── <span class="tree-file">database.py</span><span class="tree-comment"># Adaptador de banco de dados (Converte Objetos Python &lt;=&gt; Estruturas Simples)</span><br>
+          ├── <span class="tree-file">storage.py</span><span class="tree-comment"># Mecanismo de persistência genérico em JSON com escrita atômica e backup</span><br>
+          ├── <span class="tree-file">main.py</span><span class="tree-comment"># Arquivo de entrada principal do terminal (Menu Principal CLI)</span><br>
+          ├── <span class="tree-file">gui77.py</span><span class="tree-comment"># Interface gráfica (GUI) desenvolvida com CustomTkinter</span><br>
+          └── <span class="tree-file">utils.py</span><span class="tree-comment"># Funções utilitárias simples como pausar e desenhar linhas</span><br>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEÇÃO 2: MODELOS -->
+    <section id="modelos">
+      <div class="section-header">
+        <h2>🧱 Modelos de Domínio (Models)</h2>
+      </div>
+      <p class="section-desc">
+        Os modelos representam as entidades reais do sistema. O projeto faz uso de herança de classes para reaproveitar estruturas de dados comuns.
+      </p>
+
+      <!-- CLIENTE -->
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+          <h3>Cliente</h3>
+          <span class="badge badge-primary">models/cliente.py</span>
+        </div>
+        <p style="margin-bottom: 1rem; color: var(--text-muted);">
+          Representa o cliente do sistema. Contém dados de contato e o atributo <code>arquivado</code> para permitir a exclusão lógica em vez de física, facilitando a recuperação posterior caso seja necessário restaurar o registro.
+        </p>
+        
+        <div class="tab-container" id="tabsCliente">
+          <div class="tab-header">
+            <button class="tab-btn active" onclick="switchTab('tabsCliente', 'code')">Código Python</button>
+            <button class="tab-btn" onclick="switchTab('tabsCliente', 'json')">Esquema JSON</button>
+          </div>
+          <div class="tab-content active" id="tabsCliente-code">
+            <pre><code class="language-python">class Cliente:
+    def __init__(self, id, nome, telefone, email):
+        self.id = id
+        self.nome = nome
+        self.telefone = telefone
+        self.email = email
+        self.arquivado = False # Soft delete / Arquivamento
+
+    def exibir_dados(self):
+        status = "Arquivado" if self.arquivado else "Ativo"
+        print(f"\nID: {self.id}\nNome: {self.nome}\nTelefone: {self.telefone}\nEmail: {self.email}\nStatus: {status}\n" + "-"*30)</code></pre>
+          </div>
+          <div class="tab-content" id="tabsCliente-json">
+            <pre><code class="language-json">{
+    "id": 1,
+    "nome": "João Silva",
+    "telefone": "(84) 99999-8888",
+    "email": "joao@email.com",
+    "arquivado": false
+}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- MATERIAL -->
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+          <h3>Material</h3>
+          <span class="badge badge-primary">models/material.py</span>
+        </div>
+        <p style="margin-bottom: 1rem; color: var(--text-muted);">
+          Utiliza herança simples. A classe pai genérica <code>Produto</code> armazena o nome e serve como base para <code>Material</code>, que adiciona o preço por metro quadrado (<code>preco_m2</code>), utilizado para calcular o custo total de cobertura nos orçamentos.
+        </p>
+
+        <div class="tab-container" id="tabsMaterial">
+          <div class="tab-header">
+            <button class="tab-btn active" onclick="switchTab('tabsMaterial', 'code')">Código Python</button>
+            <button class="tab-btn" onclick="switchTab('tabsMaterial', 'json')">Esquema JSON</button>
+          </div>
+          <div class="tab-content active" id="tabsMaterial-code">
+            <pre><code class="language-python">class Produto:
+    def __init__(self, nome):
+        self.nome = nome
+
+class Material(Produto):
+    def __init__(self, nome, preco_m2):
+        super().__init__(nome)
+        self.preco_m2 = preco_m2
+
+    def __str__(self):
+        return f"Material: {self.nome} | Preço por m²: R$ {self.preco_m2:.2f}"</code></pre>
+          </div>
+          <div class="tab-content" id="tabsMaterial-json">
+            <pre><code class="language-json">{
+    "nome": "MDF Branco 15mm",
+    "preco_m2": 120.0
+}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- ORÇAMENTO -->
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+          <h3>Orçamento</h3>
+          <span class="badge badge-primary">models/orcamento.py</span>
+        </div>
+        <p style="margin-bottom: 1rem; color: var(--text-muted);">
+          Herda de <code>Cadastro</code> (que guarda o cliente e a descrição do serviço). O modelo <code>Orcamento</code> estende essas propriedades adicionando dados operacionais e financeiros, como material associado, quantidade de peças, área, valor de montagem e taxa de cartão.
+        </p>
+
+        <div class="tab-container" id="tabsOrcamento">
+          <div class="tab-header">
+            <button class="tab-btn active" onclick="switchTab('tabsOrcamento', 'code')">Código Python</button>
+            <button class="tab-btn" onclick="switchTab('tabsOrcamento', 'json')">Esquema JSON</button>
+          </div>
+          <div class="tab-content active" id="tabsOrcamento-code">
+            <pre><code class="language-python">class Cadastro:
+    def __init__(self, cliente, descricao):
+        self.cliente = cliente
+        self.descricao = descricao
+
+class Orcamento(Cadastro):
+    def __init__(self, cliente, descricao, material, quantidade, area, montagem, taxa_cartao, observacao):
+        super().__init__(cliente, descricao)
+        self.material = material # Instância da classe Material
+        self.quantidade = quantidade
+        self.area = area
+        self.montagem = montagem
+        self.taxa_cartao = taxa_cartao
+        self.observacao = observacao</code></pre>
+          </div>
+          <div class="tab-content" id="tabsOrcamento-json">
+            <pre><code class="language-json">{
+    "cliente": "João Silva",
+    "descricao": "Armário de Cozinha",
+    "material_nome": "MDF Branco 15mm",
+    "quantidade": 1,
+    "area": 4.5,
+    "montagem": 150.0,
+    "taxa_cartao": 3.5,
+    "observacao": "Frentes de gaveta em vidro"
+}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- METRAGEM -->
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+          <h3>Metragem</h3>
+          <span class="badge badge-primary">calculos.py</span>
+        </div>
+        <p style="margin-bottom: 1rem; color: var(--text-muted);">
+          A classe <code>Metragem</code> representa as medidas de largura e comprimento de uma peça de trabalho. Aplica o encapsulamento estrito utilizando <strong>Double Underscore (__)</strong> nos atributos, tornando-os privados em Python.
+        </p>
+
+        <div class="tab-container" id="tabsMetragem">
+          <div class="tab-header">
+            <button class="tab-btn active" onclick="switchTab('tabsMetragem', 'code')">Código Python</button>
+            <button class="tab-btn" onclick="switchTab('tabsMetragem', 'json')">Esquema JSON</button>
+          </div>
+          <div class="tab-content active" id="tabsMetragem-code">
+            <pre><code class="language-python">class Metragem:
+    def __init__(self, descricao, largura, comprimento):
+        self.__descricao = descricao     # Privado
+        self.__largura = largura         # Privado
+        self.__comprimento = comprimento # Privado
+
+    def calcular_area(self):
+        return self.__largura * self.__comprimento
+
+    def __str__(self):
+        return f"{self.__descricao} | {self.__largura}m x {self.__comprimento}m | Área: {self.calcular_area():.2f} m²"</code></pre>
+          </div>
+          <div class="tab-content" id="tabsMetragem-json">
+            <pre><code class="language-json">{
+    "descricao": "Tampo da mesa",
+    "largura": 1.2,
+    "comprimento": 0.8
+}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- AVISO DE CÓDIGO DUPLICADO -->
+      <div class="alert-box warning">
+        <span class="alert-icon">⚠️</span>
+        <div>
+          <strong>Nota de Implementação (Duplicidade no Código):</strong><br>
+          Existe um arquivo chamado <code>models/segmento.py</code> que redefine a classe <code>Metragem</code> com propriedades públicas e uma lógica CLI em <code>SistemaMetragem</code>. No entanto, o sistema central de orçamentos e a persistência em <code>database.py</code> utilizam a classe <code>Metragem</code> declarada em <code>calculos.py</code>. O arquivo <code>models/segmento.py</code> permaneceu isolado no repositório.
+        </div>
+      </div>
+    </section>
+
+    <!-- SEÇÃO 3: MANAGERS -->
+    <section id="managers">
+      <div class="section-header">
+        <h2>⚙️ Controladores (Managers)</h2>
+      </div>
+      <p class="section-desc">
+        Os <strong>Managers</strong> representam os controladores da aplicação. Eles fazem o intermédio entre a interface de entrada (menus de terminal) e a gravação permanente no banco de dados.
+      </p>
+
+      <div class="grid-2">
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h3>ClienteManager</h3>
+            <span class="badge badge-success">OOP</span>
+          </div>
+          <p style="color:var(--text-muted); font-size:0.9rem; margin-top:0.5rem; margin-bottom:1rem;">
+            Implementado como Classe. Controla o carregamento de clientes do banco, separando-os entre ativos e arquivados.
+          </p>
+          <div class="method-list">
+            <div class="method-item">
+              <div class="method-name">__init__()</div>
+              <div class="method-desc">Carrega os clientes do banco e define o próximo ID disponível varrendo os maiores registros.</div>
+            </div>
+            <div class="method-item">
+              <div class="method-name">cadastrar_cliente()</div>
+              <div class="method-desc">Solicita os dados pelo terminal, gera uma instância e dispara o salvamento.</div>
+            </div>
+            <div class="method-item">
+              <div class="method-name">arquivar_cliente() / restaurar_cliente()</div>
+              <div class="method-desc">Implementa a lógica de remoção suave, movendo objetos entre as listas "ativas" e "arquivadas".</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h3>MaterialManager</h3>
+            <span class="badge badge-warning">Funcional</span>
+          </div>
+          <p style="color:var(--text-muted); font-size:0.9rem; margin-top:0.5rem; margin-bottom:1rem;">
+            Implementado de forma procedimental com funções soltas no módulo. Facilita o cadastro rápido de insumos.
+          </p>
+          <div class="method-list">
+            <div class="method-item">
+              <div class="method-name">adicionar_material()</div>
+              <div class="method-desc">Lê nome e preço/m², cria o objeto e o adiciona à lista global, chamando o banco em seguida.</div>
+            </div>
+            <div class="method-item">
+              <div class="method-name">listar_materiais()</div>
+              <div class="method-desc">Lista todos os materiais cadastrados exibindo seus índices numéricos para escolha.</div>
+            </div>
+            <div class="method-item">
+              <div class="method-name">editar_material() / excluir_material()</div>
+              <div class="method-desc">Localiza o material com base no índice da listagem e aplica a exclusão ou alteração.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h3>OrcamentoManager</h3>
+            <span class="badge badge-warning">Funcional</span>
+          </div>
+          <p style="color:var(--text-muted); font-size:0.9rem; margin-top:0.5rem; margin-bottom:1rem;">
+            Orquestra orçamentos. Fornece o motor de cálculo financeiro completo do projeto.
+          </p>
+          <div class="method-list">
+            <div class="method-item">
+              <div class="method-name">criar_orcamento()</div>
+              <div class="method-desc">Permite associar o orçamento a um material carregado em memória via seletor numérico.</div>
+            </div>
+            <div class="method-item">
+              <div class="method-name">calcular_total_orcamento()</div>
+              <div class="method-desc">
+                Calcula os totais utilizando a seguinte fórmula financeira:
+                <br>
+                <code>C_material = Preco_m2 * Area</code><br>
+                <code>Subtotal = C_material + Montagem</code><br>
+                <code>Taxa = Subtotal * (Taxa_cartao / 100)</code><br>
+                <code>Total = Subtotal + Taxa</code>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h3>SegmentoManager</h3>
+            <span class="badge badge-warning">Funcional</span>
+          </div>
+          <p style="color:var(--text-muted); font-size:0.9rem; margin-top:0.5rem; margin-bottom:1rem;">
+            Controla a medição pontual de áreas físicas. Ideal para o levantamento de chapas ou revestimentos necessários.
+          </p>
+          <div class="method-list">
+            <div class="method-item">
+              <div class="method-name">adicionar_medida()</div>
+              <div class="method-desc">Instancia <code>Metragem</code> com a descrição e largura/comprimento fornecidos e salva no banco.</div>
+            </div>
+            <div class="method-item">
+              <div class="method-name">calcular_total()</div>
+              <div class="method-desc">Percorre a lista de metragens cadastradas, somando a área calculada de cada item em m².</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEÇÃO 4: PERSISTÊNCIA -->
+    <section id="persistencia">
+      <div class="section-header">
+        <h2>💾 Persistência de Dados & JSON</h2>
+      </div>
+      <p class="section-desc">
+        A persistência de dados é estruturada em duas subcamadas principais para separar a conversão de tipos (Serialização) da escrita física em disco (Storage Engine).
+      </p>
+
+      <div class="grid-2">
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 1rem;">
+            <h3>1. O Adaptador (database.py)</h3>
+            <span class="badge badge-primary">database.py</span>
+          </div>
+          <p style="color:var(--text-muted); font-size:0.95rem; line-height:1.6; margin-bottom:1rem;">
+            O JSON suporta apenas tipos primitivos (texto, inteiros, decimais, listas e dicionários). O arquivo <code>database.py</code> traduz os objetos do sistema (como instâncias de <code>Cliente</code>) para dicionários e vice-versa.
+          </p>
+          
+          <div class="alert-box info" style="padding: 0.75rem 1rem; margin-bottom: 1rem;">
+            <span class="alert-icon">💡</span>
+            <div style="font-size:0.85rem;">
+              <strong>Resolução de Referências:</strong> Ao carregar orçamentos, o banco guarda apenas o nome do material (chave estrangeira). A função <code>_dict_para_orcamento</code> realiza uma busca linear na lista de materiais ativos para associar novamente o objeto <code>Material</code> correto em memória.
+            </div>
+          </div>
+
+          <div class="alert-box warning" style="padding: 0.75rem 1rem;">
+            <span class="alert-icon">🔒</span>
+            <div style="font-size:0.85rem;">
+              <strong>Desvio de Atributo Privado (Name Mangling):</strong> Para salvar a <code>Metragem</code> de <code>calculos.py</code>, o adaptador contorna os campos privados usando a sintaxe interna do Python: <code>medida._Metragem__descricao</code>.
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 1rem;">
+            <h3>2. O Motor de Escrita (storage.py)</h3>
+            <span class="badge badge-primary">storage.py</span>
+          </div>
+          <p style="color:var(--text-muted); font-size:0.95rem; line-height:1.6;">
+            É um motor de gravação <strong>agnóstico</strong>. Ele não importa nenhuma classe do sistema, apenas lê e grava strings/estruturas básicas em arquivos, garantindo segurança operacional absoluta:
+          </p>
+          <ul style="margin-left: 1.25rem; margin-top: 0.5rem; color:var(--text-muted); font-size:0.9rem; line-height: 1.6;">
+            <li><strong>Backups Automáticos:</strong> Antes de gravar, cria uma cópia do arquivo atual na pasta <code>backups/</code> usando o formato de data/hora <code>arquivo.json.YYYYMMDD_HHMMSS.bak</code>, mantendo no máximo 5 backups.</li>
+            <li><strong>Gravação Atômica:</strong> Grava primeiro em um arquivo temporário <code>.tmp</code>. Após a escrita correta, substitui o original usando <code>os.replace()</code>. Se faltar energia ou o programa cair no meio, o arquivo antigo nunca é quebrado.</li>
+            <li><strong>Auto-recuperação (Self-Healing):</strong> Se o arquivo original corromper por interferência externa, o sistema detecta a falha, move-o para um arquivo <code>.CORROMPIDO</code>, busca o backup válido mais recente e o restaura.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEÇÃO 5: FLUXO DE SALVAMENTO -->
+    <section id="salvamento">
+      <div class="section-header">
+        <h2>🔄 Fluxo de Salvamento Atômico & Recuperação</h2>
+      </div>
+      <p class="section-desc">
+        Abaixo, você pode visualizar e inspecionar o fluxo de execução interna quando o sistema grava ou recupera dados corrompidos:
+      </p>
+
+      <div class="diagram-container">
+        <!-- SVG DIAGRAMA DO SAVE -->
+        <svg class="diagram-svg" width="800" height="340" viewBox="0 0 800 340">
+          <defs>
+            <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#64748B"/>
+            </marker>
+          </defs>
+
+          <!-- Fundo suave para os blocos -->
+          <rect x="10" y="10" width="780" height="320" rx="15" fill="var(--bg-code)" stroke="var(--border)"/>
+          
+          <!-- Título do Diagrama -->
+          <text x="30" y="40" font-family="'Outfit', sans-serif" font-size="16px" font-weight="700" fill="var(--text-main)">Fluxo de Persistência Segura (Gravação)</text>
+          
+          <!-- Bloco 1: Evento -->
+          <rect class="diagram-node" x="40" y="80" width="130" height="60" rx="8" />
+          <text class="diagram-text" x="55" y="115">Usuário cadastra</text>
+          
+          <!-- Seta 1 -->
+          <path class="diagram-arrow" d="M 170 110 L 220 110" />
+          
+          <!-- Bloco 2: Database converter -->
+          <rect class="diagram-node" x="220" y="80" width="150" height="60" rx="8" />
+          <text class="diagram-text" x="235" y="110">database.py converte</text>
+          <text class="diagram-text" x="235" y="125">Objeto -> Dicionário</text>
+
+          <!-- Seta 2 -->
+          <path class="diagram-arrow" d="M 370 110 L 420 110" />
+
+          <!-- Bloco 3: Storage manager (Criar Backup) -->
+          <rect class="diagram-node" x="420" y="80" width="160" height="60" rx="8" />
+          <text class="diagram-text" x="430" y="105">storage.criar_backup()</text>
+          <text class="diagram-text" x="430" y="125">Salva cópia em backups/</text>
+
+          <!-- Seta 3 -->
+          <path class="diagram-arrow" d="M 580 110 L 630 110" />
+
+          <!-- Bloco 4: Escrita tmp -->
+          <rect class="diagram-node" x="630" y="80" width="130" height="60" rx="8" />
+          <text class="diagram-text" x="640" y="105">Grava no arquivo</text>
+          <text class="diagram-text" x="640" y="125">temporário (.tmp)</text>
+
+          <!-- Seta 4 (Curva para baixo) -->
+          <path class="diagram-arrow" d="M 695 140 L 695 210" />
+
+          <!-- Bloco 5: os.replace atômico -->
+          <rect class="diagram-node" x="610" y="210" width="160" height="60" rx="8" stroke="var(--success)"/>
+          <text class="diagram-text" x="625" y="235">os.replace(tmp, json)</text>
+          <text class="diagram-text" x="625" y="250">Substituição Atômica!</text>
+
+          <!-- Seta 5 (Retorno) -->
+          <path class="diagram-arrow" d="M 610 240 L 370 240" />
+
+          <!-- Bloco 6: Salvamento concluído -->
+          <rect class="diagram-node" x="210" y="210" width="160" height="60" rx="8" />
+          <text class="diagram-text" x="225" y="240">Arquivo final salvo</text>
+          <text class="diagram-text" x="225" y="255">com sucesso em disco</text>
+
+          <!-- Status labels -->
+          <rect x="420" y="220" width="150" height="40" rx="5" fill="var(--success-light)"/>
+          <text x="430" y="244" font-family="'Plus Jakarta Sans', sans-serif" font-size="11px" font-weight="700" fill="var(--success)">SUCESSO GARANTIDO</text>
+        </svg>
+      </div>
+
+      <div class="alert-box tip">
+        <span class="alert-icon">💡</span>
+        <div>
+          <strong>Por que gravação atômica importa?</strong><br>
+          Se o Python tentasse escrever diretamente no arquivo <code>clientes.json</code> e o computador sofresse uma queda de energia no exato milissegundo da escrita, o arquivo ficaria preenchido pela metade (JSON corrompido e ilegível). Gravando no <code>.tmp</code> e rodando <code>os.replace</code>, o sistema operacional garante que a alteração seja instantânea: ou o arquivo é gravado 100% ou se mantém intacto na versão anterior.
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div>
+        Guia Técnico de Arquitetura — <strong>AM Orçamentos</strong>
+      </div>
+      <div>
+        Acesse o código-fonte em seu workspace.
+      </div>
+    </footer>
+  </main>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+  
+  <script>
+    // Gerenciador de Abas (Tabs)
+    function switchTab(containerId, tabName) {
+      const container = document.getElementById(containerId);
+      const buttons = container.querySelectorAll('.tab-btn');
+      const contents = container.querySelectorAll('.tab-content');
+      
+      buttons.forEach(btn => {
+        if(btn.innerText.toLowerCase().includes(tabName === 'code' ? 'código' : 'esquema')) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+      
+      contents.forEach(content => {
+        if (content.id === `${containerId}-${tabName}`) {
+          content.classList.add('active');
+        } else {
+          content.classList.remove('active');
+        }
+      });
+    }
+
+    // Scrollspy e Destaque de Sidebar
+    const navItems = document.querySelectorAll('.nav-item');
+    const sections = document.querySelectorAll('section');
+
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.clientHeight;
+        if (pageYOffset >= (sectionTop - 150)) {
+          current = section.getAttribute('id');
+        }
+      });
+
+      navItems.forEach(item => {
+        item.classList.remove('active');
+        if (item.getAttribute('data-section') === current) {
+          item.classList.add('active');
+        }
+      });
+    });
+
+    // Alternador de Tema (Light / Dark Mode)
+    const body = document.body;
+    const themeBtnLight = document.getElementById('themeBtnLight');
+    const themeBtnDark = document.getElementById('themeBtnDark');
+
+    // Carrega tema salvo
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    setTheme(savedTheme);
+
+    themeBtnLight.addEventListener('click', () => setTheme('light'));
+    themeBtnDark.addEventListener('click', () => setTheme('dark'));
+
+    function setTheme(theme) {
+      body.setAttribute('data-theme', theme);
+      localStorage.setItem('theme', theme);
+      
+      if (theme === 'light') {
+        themeBtnLight.classList.add('active');
+        themeBtnDark.classList.remove('active');
+      } else {
+        themeBtnLight.classList.remove('active');
+        themeBtnDark.classList.add('active');
+      }
+    }
+  </script>
+</body>
+</html>
